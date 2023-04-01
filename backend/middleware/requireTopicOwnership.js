@@ -8,10 +8,10 @@ import topicModel from "../models/topicModel.js"
  */
 const requireTopicOwnership = async (req, res, next) => {
     const userId = req.user.id
-    const topic = await topicModel.findOne(req.params.topicId)
+    const topic = await topicModel.findOne({ _id: req.params.topicId })
 
     if (!topic) return res.status(404).json({ message: "Topic not found" })
-    if (req.topic.user1 != userId && req.topic.user2 != userId) return res.status(401).json({ message: "Unauthorized" })
+    if (topic.user1 != userId && topic.user2 != userId) return res.status(401).json({ message: "Unauthorized" })
     next()
 }
 export default requireTopicOwnership

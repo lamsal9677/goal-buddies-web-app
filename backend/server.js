@@ -5,6 +5,7 @@ import dotenv from "dotenv"
 
 import userRouter from "./routes/userRoute.js"
 import taskRouter from "./routes/taskRoute.js"
+import topicRouter from "./routes/topicRoute.js"
 import forgotPasswordRouter from "./routes/forgotPassword.js"
 
 //app config
@@ -30,6 +31,7 @@ mongoose.connect(process.env.MONGO_URI, {
 
 //api endpoints
 app.use("/api/user", userRouter)
+app.use("/api/topic", topicRouter)
 app.use("/api/task", taskRouter)
 app.use("/api/forgotPassword", forgotPasswordRouter)
 

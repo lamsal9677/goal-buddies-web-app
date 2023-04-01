@@ -61,4 +61,4 @@ const addUserToTopic = async (req, res) => {
     }
 }
 
-export { getTopic, updateTopic, addTopic }
+export { getTopic, updateTopic, addTopic, addUserToTopic }

@@ -5,8 +5,7 @@ const topicSchema = new mongoose.Schema({
     title: { type: String, required: true },
     user1: { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true },
     user2: { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true },
-    user1Tasks: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Task' }],
-    user2Tasks: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Task' }],
+    tasks: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Task', required: true }],
 })
 topicSchema.index({ topic: 1, user1: 1, user2: 1}, { unique: true });
 

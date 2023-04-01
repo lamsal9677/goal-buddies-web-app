@@ -51,10 +51,11 @@ const updateTopic = async (req, res) => {
 
 const addUserToTopic = async (req, res) => {
     const { topicId } = req.params;
-    const { user2 } = req.body;
-    if (!(await userModel.findOne({ _id: user2 }))) return res.status(400).json({ message: "Invalid user2" });
+    const topic = topicModel.findOne({ _id: topicId })
+    if (topic.user1 == req.user.id) return res.status(400).json({ message: "You are already in this topic" })
+
     try {
-        const topic = await topicModel.findByIdAndUpdate(topicId, { user2 }, { new: true })
+        const topic = await topicModel.findByIdAndUpdate(topicId, { user2: req.user.id }, { new: true })
         res.status(200).json(topic)
     } catch (error) {
         res.status(404).json({ message: "Topic not found" })

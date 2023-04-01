@@ -1,8 +1,8 @@
 import mongoose from "mongoose";
-const taskInstance = mongoose.Schema({
+const taskSchema = mongoose.Schema({
     title:{type:String, required:true},
     description:{type:String, required:true},
-    userId:{type:String, required:true},
+    topic: { type: mongoose.Schema.Types.ObjectId, ref: 'Topic' },
     completed:{type:Boolean, required:true}
 }, {timestamps:true});
 

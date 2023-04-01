@@ -1,10 +1,10 @@
 function userReducer(user, action) {
     console.log("userreducer");
     switch(action.type){
-        case "SET_USER":{
+        case "user/setuser":{
             return action.payload;
         }
-        case "UNSET_USER":{
+        case "user/unsetUser":{
             return {};
         }
         default: return user;

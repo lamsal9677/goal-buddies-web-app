@@ -1,13 +1,12 @@
-function tokenReducer(userToken, action) {
-    console.log("tokenreducer");
+function tokenReducer(token, action) {
     switch(action.type){
-        case "SET_TOKEN":{
+        case "token/setToken":{
             return action.payload;
         }
-        case "UNSET_TOKEN":{
+        case "token/unsetToken":{
             return null;
         }
-        default: return userToken;
+        default: return token;
     }
 }
 export default tokenReducer;

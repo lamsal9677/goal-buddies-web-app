@@ -2,7 +2,7 @@ import mongoose from "mongoose";
 
 // topics collect together all the tasks for a pair of users
 const topicSchema = new mongoose.Schema({
-    topic: { type: String, required: true },
+    title: { type: String, required: true },
     user1: { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true },
     user2: { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true },
     user1Tasks: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Task' }],

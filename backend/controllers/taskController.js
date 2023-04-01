@@ -5,33 +5,6 @@ import dotenv from "dotenv";
 import topicModel from "../models/topicModel.js";
 dotenv.config();
 
-const addOrUpdateTask = async (req, res) => {
-    const { topicId } = req.params;
-    const { id } = req.body;
-    const { title, description } = req.body;
-    const userId = req.user.id;
-    const topic = await topicModel.find({_id: topicId});
-    
-    if (id) {
-        newTask = await newTask.find({ _id: id })
-        
-    }
-
-    const newTask = new taskModel({ title, description, completed: false, topic })
-
-    if (topic.user1 == userId) {
-        topic.user1Tasks.push(newTask); 
-    } else if (topic.user2 == userId) {
-        topic.user2Tasks.push(newTask)
-    } else { 
-        return res.status(401).json({ message: "Unauthorized" })
-    }
-
-    Promise.all([newTask.save(), topic.save()])
-        .then(() => res.status(200).json({ message: "Task added successfully" }))
-        .catch((error) => res.status(500).json({ message: error.message }))
-}
-
 const removeByValue = (arr, value) => {
     let index = arr.indexOf(value);
     if (index !== -1) {
@@ -39,6 +12,41 @@ const removeByValue = (arr, value) => {
         return true
     }
     return false
+}
+
+/***
+ * Note: all of the below function run after requireTopicOwnership middleware
+ */
+
+const upsertTask = async (req, res) => {
+    const { topicId } = req.params;
+    const { id } = req.body;
+    const { title, description } = req.body;
+    const userId = req.user.id;
+    const topic = await topicModel.find({_id: topicId});
+    
+    
+    try {
+        const { nModified } = await taskModel.updateOne({ _id: id }, { ...req.body }, { upsert: true })
+    } catch (error) {
+        return res.status(500).json({ message: error.message })
+    }
+
+    const newTask = new taskModel({ title, description, completed: false, topic })
+
+    // if this task is newly created, add it to the topic
+    if (nModified == 0) {
+        if (topic.user1 == userId) topic.user1Tasks.push(newTask); 
+        else if (topic.user2 == userId) topic.user2Tasks.push(newTask)
+    }
+
+    try {
+        topic.save()
+    } catch (error) {
+        return res.status(500).json({ message: error.message })
+    }
+
+    return res.status(200).json({ message: "Task added successfully" })
 }
 
 const removeTask = async (req, res) => {
@@ -55,8 +63,6 @@ const removeTask = async (req, res) => {
         if (removeByValue(topic.user1Tasks, taskId)) return res.status(404).json({ message: "Task not found in topic" })
     } else if (topic.user2 == userId) {
         if (removeByValue(topic.user2Tasks, taskId)) return res.status(404).json({ message: "Task not found in topic" })
-    } else { 
-        return res.status(401).json({ message: "Unauthorized" })
     }
 
     Promise.all([task.remove(), topic.save()])
@@ -70,4 +76,4 @@ const getTask = (req, res) => {
         .catch((error) => res.status(501).json({ message: error.message }))
 }
 
-export { addTask, getTask, removeTask }
+export { upsertTask, getTask, removeTask }

@@ -19,22 +19,22 @@ const getTopic = async (req, res) => {
     return res.status(200).json(data)
 }
 
-const createTopic = async (req, res) => {
-    if (!req.body.topic) return res.status(400).json({ message: "Topic is required" })
-    if (!req.body.user1) return res.status(400).json({ message: "User1 is required" })
-    if (!req.body.user2) return res.status(400).json({ message: "User2 is required" })
-    
+const upsertTopic = async (req, res) => {
+    const { id, title, user1, user2 } = req.body;
+    try {
+        const options = { upsert: true, new: true, setDefaultsOnInsert: true };
+        const result = await Topic.findOneAndUpdate({ _id: id }, { title, user1, user2 }, options);
+        res.status(200).json(result);
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ error: `Internal server error: ${error}` });
+    }
+
     const topic = new topicModel({
         topic: req.body.topic,
         user1: req.body.user1,
         user2: req.body.user2,
     })
-    
-    try {
-        await topic.save()
-    } catch (error) {
-        res.status(501).json({ message: error.message })
-    }
-    
-    return res.status(200).json({ message: "Topic created" })
 }
+
+export { getTopic, upsertTopic }

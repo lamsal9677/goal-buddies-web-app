@@ -7,6 +7,6 @@ const router = express.Router();
 
 router.post("/:topicId/", [requireAuth, requireTopicOwnership], upsertTask) // add task belonging to the user to the topic
 router.get("/:topicId/", [requireAuth, requireTopicOwnership], getTask)
-router.delete("/:topicId/removeTask", [requireAuth, requireTopicOwnership], removeTask)
+router.delete("/:topicId", [requireAuth, requireTopicOwnership], removeTask)
 
 export default router;

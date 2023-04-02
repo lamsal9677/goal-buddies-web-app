@@ -5,9 +5,6 @@ import { Link, Navigate } from 'react-router-dom';
 import axios from "../Axios/axios.js"
 import TokenContext from '../context/UserContext.js';
 
-import { EmojiProvider, Emoji } from 'react-apple-emojis'
-import emojiData from 'react-apple-emojis/lib/data.json'
-
 function Login() {
     const [formData, setFormData] = useState({});
     const { userToken, tokenDispatch, userDispatch } = useContext(TokenContext);

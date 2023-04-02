@@ -20,12 +20,10 @@ function LoginPage({ location }) {
     axios.post('/user/login', { email, password })
       .then((response) => {
         tokenDispatch(response.data.token, "token/setToken");
+        JSON.parse(localStorage.setItem("authToken", ))
       })
-      navigate(-1)
-  }
+      navigate(location?.state?.from || "/", { replace: true })
 
-  const handleLogout = (event) => {
-    event.preventDefault();
   }
 
   return (

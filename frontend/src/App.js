@@ -16,7 +16,7 @@ import Register from './components/Register';
 function App() {
   const _token = JSON.parse(localStorage.getItem("authToken"));
   const [token, tokenDispatch] = useReducer(tokenReducer, _token)
-  const [user, userDispatch] = useReducer(userReducer, {})
+  const [user, userDispatch] = useReducer(userReducer, null)
   
   // try to set the user every time the token changes
   useEffect(() => {
@@ -33,19 +33,17 @@ function App() {
     }
   }, [token])
 
-  const showLogin = true;
-
   return (
     <UserContext.Provider value={{ token, tokenDispatch, user, userDispatch}}>
-        <BrowserRouter>
-            <Routes>
-              <Route exact path='/' element={<ProtectedRoutes/>}>
-                <Route path="/:slug" component={DebugDisplay} />
-              </Route>
-              <Route path="/login" element={<Login />} />
-              <Route path="/register" element={<Register />} />
-            </Routes>
-        </BrowserRouter>
+      <BrowserRouter>
+          <Routes>
+            <Route path="/login" element={<Login />} />
+            <Route path="/register" element={<Register />} />
+            <Route path='/' exact={false} element={<ProtectedRoutes/>}>
+              <Route path="/page" element={<div>Hello</div>} />
+            </Route>
+          </Routes>
+      </BrowserRouter>
     </UserContext.Provider>
   );
 }

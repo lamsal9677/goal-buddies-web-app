@@ -1,86 +1,57 @@
 import './App.css';
 import { useEffect, useReducer } from 'react';
 import { BrowserRouter, Route, Routes } from 'react-router-dom';
-import Active from './components/Active';
-import Completed from './components/Completed';
-import AllTask from './components/AllTask';
-import Layout from './components/Layout';
-import TaskContext from './context/TaskContext';
-import TokenContext from './context/TokenContext';
-import taskReducer from './reducer/taskReducer';
 import tokenReducer from './reducer/tokenReducer';
 import userReducer from './reducer/userReducer';
-import Header from './components/Header/Header';
-import Login from './components/Login';
-import Register from './components/Register';
-import ForgotPassword from './components/forgotPassword/ForgotPassword';
-import ResetPassword from './components/forgotPassword/ResetPassword';
 import axios from './Axios/axios.js';
+import ProtectedRoutes from './components/protectedRoutes';
+import UserContext from './context/UserContext';
+import DebugDisplay from './components/DebugDisplay';
+import Login from './pages/Login';
+import Register from './components/Register';
+
+
+
+
 function App() {
-  const token = JSON.parse(localStorage.getItem("authToken"));
-  const [tasks, dispatch] = useReducer(taskReducer, [])
-  const [userToken, tokenDispatch] = useReducer(tokenReducer, token)
+  const _token = JSON.parse(localStorage.getItem("authToken"));
+  const [token, tokenDispatch] = useReducer(tokenReducer, _token)
   const [user, userDispatch] = useReducer(userReducer, {})
+  
+  // try to set the user every time the token changes
   useEffect(() => {
-    console.log("App.js");
-    const fetchUser = async () => {
-      try {
-        console.log("fetchUser");
-        const res = await axios.get("/user/getUser",{
-          headers: {
-            Authorization: `Bearer ${userToken}`
+    if (token) {
+      (async () => {
+          try {
+            const res = await axios.get("/user/getUser", { headers: { Authorization: `Bearer ${token}` } })
+            userDispatch({ type: "user/setUser", payload: res.data.user })
+          } catch (error) {
+            userDispatch({ type: "user/unsetUser" })
           }
-        })
-        //tokenDispatch({type: "SET_TOKEN", payload: res.token})
-        console.log("res.data: ", res.data);
-        userDispatch({type: "SET_USER", payload:res.data.user})
-      } catch (error) {
-        console.log(error);
-      }
+        }
+      )();
     }
-    if (userToken) {
-      fetchUser()
-    }
-  },[userToken])
-  useEffect(() => {
-    const fetchTasks = async () => {
-      try {
-        console.log("fetchTasks");
-        const res = await axios.get("/task/getTask", {
-          headers: {
-            Authorization: `Bearer ${userToken}`
-          }
-        })
-        dispatch({ type: "SET_TASK", payload: res.data })
-      } catch (error) {
-        console.log(error);
-      }
-    }
-    if (userToken) {
-      fetchTasks()
-    }
-  },[userToken])
+  }, [token])
+
+  const showLogin = true;
+
   return (
-    <BrowserRouter>
-      <TokenContext.Provider value={{userToken, tokenDispatch, user, userDispatch}}>
-        <TaskContext.Provider value={{ tasks, dispatch }}>
-          <Routes>
-            <Route path="/" element={<Header />}>
-              <Route path='/' element={token ? <Layout /> : <Login />}>
-                <Route index element={<AllTask />} />
-                <Route path="active" element={<Active />} />
-                <Route path="completed" element={<Completed />} />
+    <UserContext.Provider value={{ token, tokenDispatch, user, userDispatch}}>
+     { showLogin ? (<Login/>)
+       :
+      ( 
+        <BrowserRouter>
+            <Routes>
+              <Route exact path='/' element={<ProtectedRoutes/>}>
+                <Route path="/:slug" component={DebugDisplay} />
               </Route>
               <Route path="/login" element={<Login />} />
               <Route path="/register" element={<Register />} />
-              <Route path="/forgotPassword" element={<ForgotPassword />} />
-              <Route path="/resetPassword" element={<ResetPassword />} />
-            </Route>
-          </Routes>
-        </TaskContext.Provider>
-      </TokenContext.Provider>
-
-    </BrowserRouter>
+            </Routes>
+        </BrowserRouter>
+      )
+      }
+    </UserContext.Provider>
   );
 }
 

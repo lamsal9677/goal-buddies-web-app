@@ -1,7 +1,7 @@
 import React from 'react';
 import { useContext } from 'react';
 import { Outlet, NavLink } from 'react-router-dom';
-import TokenContext from '../../context/UserContext.js/index.js';
+import TokenContext from '../../context/UserContext.js';
 import "./header.css"
 function Header() {
     const token = localStorage.getItem("authToken");

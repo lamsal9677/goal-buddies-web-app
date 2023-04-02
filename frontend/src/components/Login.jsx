@@ -1,9 +1,12 @@
-import resets from '../_resets.module.css';
-import classes from './MacBookPro1422ForExport.module.css';
+import resets from '../static/_resets.module.css';
+import classes from '../static/MacBookPro1422ForExport.module.css';
 import React, { useState, useContext, memo } from 'react';
 import { Link, Navigate } from 'react-router-dom';
 import axios from "../Axios/axios.js"
-import TokenContext from '../context/UserContext.js/index.js';
+import TokenContext from '../context/UserContext.js';
+
+import { EmojiProvider, Emoji } from 'react-apple-emojis'
+import emojiData from 'react-apple-emojis/lib/data.json'
 
 function Login() {
     const [formData, setFormData] = useState({});

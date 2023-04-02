@@ -37,9 +37,6 @@ function App() {
 
   return (
     <UserContext.Provider value={{ token, tokenDispatch, user, userDispatch}}>
-     { showLogin ? (<Login/>)
-       :
-      ( 
         <BrowserRouter>
             <Routes>
               <Route exact path='/' element={<ProtectedRoutes/>}>
@@ -49,8 +46,6 @@ function App() {
               <Route path="/register" element={<Register />} />
             </Routes>
         </BrowserRouter>
-      )
-      }
     </UserContext.Provider>
   );
 }

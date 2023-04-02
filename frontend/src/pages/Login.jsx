@@ -3,37 +3,29 @@ import UserContext from '../context/UserContext';
 import axios from '../Axios/axios'
 import classes from '../static/login.module.css';
 import resets from '../static/_resets.module.css';
+import { useNavigate } from 'react-router';
 
-function LoginPage() {
-  const { setToken } = useContext(UserContext);
+function LoginPage({ location }) {
+
+  const navigate = useNavigate();
+
+  const { tokenDispatch } = useContext(UserContext);
 
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-  const [loggedIn, setLoggedIn] = useState(false);
 
   const handleLogin = (event) => {
     event.preventDefault();
     // Perform login validation here
-    axios.post('/login', { email, password })
+    axios.post('/user/login', { email, password })
       .then((response) => {
-        setToken(response.data.token);
-        
-        setLoggedIn(true);
+        tokenDispatch(response.data.token, "token/setToken");
       })
+      navigate(-1)
   }
 
   const handleLogout = (event) => {
     event.preventDefault();
-    setLoggedIn(false);
-  }
-
-  if (loggedIn) {
-    return (
-      <div>
-        <p>You are logged in!</p>
-        <button onClick={handleLogout}>Logout</button>
-      </div>
-    );
   }
 
   return (
